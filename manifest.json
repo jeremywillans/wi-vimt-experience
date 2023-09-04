@@ -1,0 +1,114 @@
+{
+  "id": "c1f48477-2e65-4748-b259-d6e3ca2f7705",
+  "manifestVersion": 1,
+  "displayName": "VIMT Experience",
+  "vendor": "Jeremy Willans",
+  "email": "jwillans@cisco.com",
+  "description": "VIMT Experience is a Workspace Integration designed to improve the default meeting experience when using Webex CVI",
+  "descriptionUrl": "https://github.com/jeremywillans/wi-vimt-experience",
+  "availability": "org_private",
+  "tocUrl": "",
+  "apiAccess": [
+    {
+      "scope": "spark-admin:devices_read",
+      "access": "required",
+      "role": "id_readonly_admin"
+    },
+    {
+      "scope": "spark-admin:workspaces_read",
+      "access": "required",
+      "role": "id_readonly_admin"
+    },
+    {
+      "scope": "spark:xapi_statuses",
+      "access": "required"
+    },
+    {
+      "scope": "spark:xapi_commands",
+      "access": "required"
+    },
+    {
+      "scope": "spark-admin:devices_write",
+      "access": "required"
+    }
+  ],
+  "xapiAccess": {
+    "status": [
+      {
+        "path": "SystemUnit.State.System",
+        "access": "required"
+      },
+      {
+        "path": "Audio.Volume",
+        "access": "required"
+      },
+      {
+        "path": "Call[*].*",
+        "access": "required"
+      }
+    ],
+    "commands": [
+      {
+        "path": "Audio.Volume.Set",
+        "access": "required"
+      },
+      {
+        "path": "Call.DTMFSend",
+        "access": "required"
+      },
+      {
+        "path": "UserInterface.Message.Alert.Display",
+        "access": "required"
+      },
+      {
+        "path": "UserInterface.Extensions.List",
+        "access": "required"
+      },
+      {
+        "path": "UserInterface.Extensions.Panel.Save",
+        "access": "required"
+      },
+      {
+        "path": "UserInterface.Extensions.Panel.Close",
+        "access": "required"
+      },
+      {
+        "path": "UserInterface.Extensions.Panel.Remove",
+        "access": "required"
+      },
+      {
+        "path": "Video.Layout.SetLayout",
+        "access": "required"
+      },
+      {
+        "path": "Conference.ParticipantList.Search",
+        "access": "required"
+      }
+    ],
+    "events": [
+      {
+        "path": "BootEvent",
+        "access": "required"
+      },
+      {
+        "path": "OutgoingCallIndication",
+        "access": "required"
+      },
+      {
+        "path": "CallSuccessful",
+        "access": "required"
+      },
+      {
+        "path": "CallDisconnect",
+        "access": "required"
+      },
+      {
+        "path": "UserInterface.Extensions.Panel.Clicked",
+        "access": "required"
+      }
+    ]
+  },
+  "provisioning": {
+    "type": "manual"
+  }
+}

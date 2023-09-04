@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  wi-vimt-experience:
+    image: wi-vimt-experience:latest
+    container_name: wi-vimt-experience
+    environment:
+      # REPLACE BELOW WITH PREREQUISITE VARIABLES 
+      CLIENT_ID: XXXXXXXXXXXXXXXXX
+      CLIENT_SECRET: XXXXXXXXXXXXXXXXX
+      CODE: XXXXXXXXXXXXXXXXX
+      # INCREASE LOGGING VISIBILITY DURING TESTING
+      CONSOLE_LEVEL: debug
+      WI_LOGGING: info
+      LOG_DETAILED: 'true'
+    restart: unless-stopped
+    networks:
+      - internal
+
+networks:
+  internal:
