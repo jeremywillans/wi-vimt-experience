@@ -2,7 +2,7 @@ version: '3'
 
 services:
   wi-vimt-experience:
-    image: wi-vimt-experience:latest
+    image: jeremywillans/wi-vimt-experience:latest
     container_name: wi-vimt-experience
     environment:
       # REPLACE BELOW WITH PREREQUISITE VARIABLES 
