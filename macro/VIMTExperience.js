@@ -211,9 +211,9 @@ class VIMTExperience {
   }
 
   async handleCallSuccessful() {
+    await sleep(1000);
     // Check if active VIMT call
     if (this.vimtActive) {
-      await sleep(500);
       try {
         if (await this.participantCheck()) {
           this.performActions();
