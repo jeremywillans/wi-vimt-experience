@@ -6,6 +6,7 @@ VIMT Experience is a Workspace Integration designed to improve the default meeti
 
 Current Options
 - Grid View Layout as the default layout
+- Large Gallery Layout as the default layout
 - Hide Non-Video Participants by default
 - Adds Toggle for Hiding Non-Video Participants
 
