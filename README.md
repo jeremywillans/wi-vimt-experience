@@ -11,6 +11,9 @@ Current Options
 
 Periodic check of devices occurs every 30 minutes (on the half/hour intervals) to detect if a new device is un/tagged, otherwise devices are re/processed on integration restart.
 
+## Macro Version
+Within the macro directory of this repository contains a macro version of this for individual device deployment, if preferred. As the underlying code is shared between both the macro and the Workspace Integration, it will be maintained in the same repository for consistency.
+
 ## Prerequisites
 
 1. Navigate to Workspace Integrations in [Control Hub](https://admin.webex.com/workspaces/integrations)
