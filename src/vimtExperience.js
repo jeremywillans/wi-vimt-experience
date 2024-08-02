@@ -10,6 +10,7 @@ const logger = require('./logger')(__filename.slice(__dirname.length + 1, -3));
 const e = cleanEnv(process.env, {
   LOG_DETAILED: bool({ default: true }),
   VE_GRID_DEFAULT: bool({ default: true }),
+  VE_GALLERY_DEFAULT: bool({ default: false }),
   VE_HIDE_NON_VIDEO: bool({ default: true }),
   VE_ADD_BUTTON: bool({ default: true }),
   VE_SHOW_MESSAGE: bool({ default: true }),
@@ -22,6 +23,7 @@ const e = cleanEnv(process.env, {
 // Define VIMT Experience options from ENV Parameters
 const veOptions = {
   gridDefault: e.VE_GRID_DEFAULT, // Define Grid View Default option
+  largeGalleryDefault: e.VE_GALLERY_DEFAULT, // Define Large Gallery Default option
   hideNonVideo: e.VE_HIDE_NON_VIDEO, // Hide Non-Video Participants by default
   addNonVideoButton: e.VE_ADD_BUTTON, // Adds option during meeting to toggle non-video participants
   showMessage: e.VE_SHOW_MESSAGE, // Briefly show message for VIMT Optimizations
@@ -54,25 +56,12 @@ class VIMTExperience {
     if (this.o.logDetailed) logger.debug(`${this.id}: ${message}`);
 
     try {
-      const Level = await this.xapi.status.get(this.deviceId, 'Audio.Volume');
-      await this.xapi.command(this.deviceId, 'Audio.Volume.Set', {
-        Level: 30,
-      });
-      if (this.o.logDetailed) logger.debug(`${this.id}: Volume set to 30`);
-
-      await sleep(200);
       const Feedback = this.o.silentDtmf ? 'Silent' : 'Audible';
       this.xapi.command(this.deviceId, 'Call.DTMFSend', {
         DTMFString: code,
         Feedback,
       });
       if (this.o.logDetailed) logger.debug(`${this.id}: DTMF Values Sent`);
-
-      await sleep(750);
-      await this.xapi.command(this.deviceId, 'Audio.Volume.Set', {
-        Level,
-      });
-      if (this.o.logDetailed) logger.debug(`${this.id}: Volume Set Back to ${Level}`);
     } catch (error) {
       logger.error(`${this.id}: Error Sending DTMF`);
       logger.debug(`${this.id}: ${error.message}`);
@@ -82,10 +71,8 @@ class VIMTExperience {
   // Add button to panel for toggling Non-Video participants
   async addPanel() {
     const config = await this.xapi.command(this.deviceId, 'UserInterface.Extensions.List');
-    if (config.Extensions.Panel) {
-      const panelExist = config.Extensions.Panel.find(
-        (panel) => panel.PanelId === this.o.panelId,
-      );
+    if (config.Extensions && config.Extensions.Panel) {
+      const panelExist = config.Extensions.Panel.find((panel) => panel.PanelId === this.o.panelId);
       if (panelExist) {
         if (this.o.logDetailed) logger.debug(`${this.id}: Panel already added`);
         return;
@@ -110,34 +97,28 @@ class VIMTExperience {
     await this.xapi.command(
       this.deviceId,
       'UserInterface.Extensions.Panel.Save',
-      {
-        PanelId: this.o.panelId,
-      },
+      { PanelId: this.o.panelId },
       xml,
     );
   }
 
   // Remove button from panel
-  async removePanel() {
+  async removePanel(showLog = true) {
     const config = await this.xapi.command(this.deviceId, 'UserInterface.Extensions.List');
-    if (config.Extensions.Panel) {
-      const panelExist = config.Extensions.Panel.find(
-        (panel) => panel.PanelId === this.o.panelId,
-      );
+    if (config.Extensions && config.Extensions.Panel) {
+      const panelExist = config.Extensions.Panel.find((panel) => panel.PanelId === this.o.panelId);
       if (!panelExist) {
-        if (this.o.logDetailed) logger.debug(`${this.id}: Panel does not exist`);
+        if (this.o.logDetailed && showLog) logger.debug(`${this.id}: Panel does not exist`);
         return;
       }
     }
 
-    if (this.o.logDetailed) logger.debug(`${this.id}: Removing Panel`);
+    if (this.o.logDetailed && showLog) logger.debug(`${this.id}: Removing Panel`);
     await this.xapi.command(this.deviceId, 'UserInterface.Extensions.Panel.Close');
     await this.xapi.command(
       this.deviceId,
       'UserInterface.Extensions.Panel.Remove',
-      {
-        PanelId: this.o.panelId,
-      },
+      { PanelId: this.o.panelId },
     );
   }
 
@@ -154,6 +135,16 @@ class VIMTExperience {
       } catch (error) {
         logger.error(`${this.id}: Unable to set Grid`);
         logger.debug(`${this.id}: ${error.message}`);
+      }
+    }
+    // Large Gallery Default
+    if (this.o.largeGalleryDefault) {
+      try {
+        await this.xapi.command(this.deviceId, 'Video.Layout.SetLayout', { LayoutName: 'Large Gallery' });
+        messageText.push('Large Gallery Layout Enabled');
+      } catch (error) {
+        logger.error('Unable to set Large Gallery');
+        logger.debug(error.message ? error.message : error);
       }
     }
     // Hide Non-Video participants
@@ -216,12 +207,12 @@ class VIMTExperience {
     if (this.o.logDetailed) logger.debug(`${this.id}: Checking Participant List`);
     const result = await this.xapi.command(this.deviceId, 'Conference.ParticipantList.Search');
     // Joined meeting with multiple participants
-    if (result && result.Participant.length > 1) {
+    if (result && result.Participant && result.Participant.length > 1) {
       if (this.o.logDetailed) logger.debug(`${this.id}: Multiple participants detected`);
       return true;
     }
     // Joined meeting as only participant (so far!)
-    if (result && result.Participant[0].Status === 'connected') {
+    if (result && result.Participant && result.Participant[0].Status === 'connected') {
       if (this.o.logDetailed) logger.debug(`${this.id}: Device detected in meeting`);
       return true;
     }
@@ -231,6 +222,7 @@ class VIMTExperience {
   async handleCallSuccessful() {
     // Check if active VIMT call
     if (this.vimtActive) {
+      await sleep(500);
       try {
         if (await this.participantCheck()) {
           this.performActions();
@@ -297,7 +289,7 @@ class VIMTExperience {
 
   configureCodec() {
     // Remove lingering button during init.
-    this.removePanel();
+    this.removePanel(false);
   }
 }
 exports.VIMTExperience = VIMTExperience;
