@@ -1,6 +1,6 @@
 {
   "name": "wi-vimt-experience",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "VIMT Experience Workspace Integration",
   "main": "app.js",
   "scripts": {

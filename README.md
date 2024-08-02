@@ -29,18 +29,14 @@ Periodic check of devices occurs every 30 minutes (on the half/hour intervals) t
 
 ## Deployment (Docker)
 
-1. Build and Deploy Docker Container (or deploy to Cloud) - ensure you include the required variables outlined below.
-- This integration does not require local device access as all communications are done over Cloud xAPI.
-- A sample docker-compose.yml file has been included in this repository after the image has been built locally (first command below)
+The simplest deployment method is using [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
-    ```
-    > docker build --tag wi-vimt-experience .
-    > docker create --name wi-vimt-experience \
-      -e _ENVIRONMENTAL_VARIABLE_ = _value_ \
-      wi-vimt-experience
-    ```
-
-2. Review the logs from the Integration output to confirm no errors encountered
+1. Clone / Download repository
+2. Update the included docker-compose.yml file with the correct Environmental parameters
+3. - Use the prebuilt image available on Docker Hub (included in docker-compose.yml)
+   - Build the Docker Image using `docker build --tag wi-vimt-experience .` and update image line in docker-compose.yml
+4. Provision and start the Integration using `docker-compose up -d`
+5. Review the console logs using `docker logs wi-vimt-experience -f` (assuming you are using the default container name)
 
 ### Environmental Variables
 
@@ -76,8 +72,9 @@ These variables can be individually defined in Docker, or loaded as an `.env` fi
 | GLOBAL_AGENT_NO_PROXY | no | string | ` ` | Comma Separated List of excluded proxy domains (Supports wildcards)
 | NODE_EXTRA_CA_CERTS | no | string | ` ` | Include extra CA Cert bundle if required, (PEM format) ensure location is attached as a volume to the container
 | **VIMT Options**
-| VE_GRID_DEFAULT | no | bool | `true` | : bool({ default: true }),
-| VE_HIDE_NON_VIDEO | no | bool | `true` | : bool({ default: true }),
+| VE_GRID_DEFAULT | no | bool | `true` | : Define Grid View Default option
+| VE_GALLERY_DEFAULT | no | bool | `false` | Define Large Gallery Default option
+| VE_HIDE_NON_VIDEO | no | bool | `true` | : Hide Non-Video Participants by default
 | VE_ADD_BUTTON | no | bool | `true` | Add button the device allowing toggling of Non-Video participants
 | VE_SHOW_MESSAGE | no | bool | `true` | Show message when optimizations applied to device
 | VE_MESSAGE_TIMEOUT | no | num | `5` | Seconds messages stay on screen
