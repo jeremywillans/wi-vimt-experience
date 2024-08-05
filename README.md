@@ -15,7 +15,7 @@ Periodic check of devices occurs every 30 minutes (on the half/hour intervals) t
 ## Macro Version
 Within the macro directory of this repository contains a macro version of this for individual device deployment, if preferred. As the underlying code is shared between both the macro and the Workspace Integration, it will be maintained in the same repository for consistency.
 
-## Prerequisites
+## Prerequisites (WI Version)
 
 1. Navigate to Workspace Integrations in [Control Hub](https://admin.webex.com/workspaces/integrations)
 2. Select `Add integration` then `Upload integration` and provide included manifest.json file - ensure you document the provided credentials
@@ -76,9 +76,9 @@ These variables can be individually defined in Docker, or loaded as an `.env` fi
 | GLOBAL_AGENT_NO_PROXY | no | string | ` ` | Comma Separated List of excluded proxy domains (Supports wildcards)
 | NODE_EXTRA_CA_CERTS | no | string | ` ` | Include extra CA Cert bundle if required, (PEM format) ensure location is attached as a volume to the container
 | **VIMT Options**
-| VE_GRID_DEFAULT | no | bool | `true` | : Define Grid View Default option
+| VE_GRID_DEFAULT | no | bool | `true` | Define Grid View Default option
 | VE_GALLERY_DEFAULT | no | bool | `false` | Define Large Gallery Default option
-| VE_HIDE_NON_VIDEO | no | bool | `true` | : Hide Non-Video Participants by default
+| VE_HIDE_NON_VIDEO | no | bool | `true` | Hide Non-Video Participants by default
 | VE_ADD_BUTTON | no | bool | `true` | Add button the device allowing toggling of Non-Video participants
 | VE_SHOW_MESSAGE | no | bool | `true` | Show message when optimizations applied to device
 | VE_MESSAGE_TIMEOUT | no | num | `5` | Seconds messages stay on screen
